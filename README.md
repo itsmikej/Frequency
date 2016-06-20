@@ -4,9 +4,9 @@ A simple frequency control system
 
 Installation
 ------------
-
-`composer require imj\frequency`
-
+```shell
+composer require imj\frequency`
+```
 
 Basic Usage
 ------------
