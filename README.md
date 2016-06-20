@@ -5,12 +5,12 @@ A simple frequency control system
 Installation
 ------------
 
-  composer require imj\frequency
+`composer require imj\frequency`
 
 
 Basic Usage
 ------------
-```
+```php
 use Imj\Frequency;
 
 $config = [
