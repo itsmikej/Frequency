@@ -31,6 +31,8 @@ $config = [
 ];
 
 $redis = getRedis();
+$freq = new Frequency($redis, $config);
+
 $ip = getIp();
 $ret= $freq->check($ip);
 $min = 10;
