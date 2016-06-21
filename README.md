@@ -5,7 +5,7 @@ A simple frequency control system
 Installation
 ------------
 ```shell
-composer require imj\frequency`
+composer require imj/frequency
 ```
 
 Basic Usage
