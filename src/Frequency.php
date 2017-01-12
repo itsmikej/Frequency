@@ -11,7 +11,12 @@ class Frequency
     /**
      * @var \Redis
      */
-    protected $redis;
+    protected $rRedis;
+
+    /**
+     * @var \Redis
+     */
+    protected $wRedis;
 
     protected $config;
 
@@ -27,7 +32,15 @@ class Frequency
      */
     public function __construct($redis, $config, $hash_max_length = 50)
     {
-        if (!($redis instanceof \Redis)) {
+        if (isset($redis['rRedis']) && isset($redis['wRedis'])) {
+            $this->rRedis = $redis['rRedis'];
+            $this->wRedis = $redis['wRedis'];
+        } else {
+            $this->rRedis = $redis;
+            $this->wRedis = $redis;
+        }
+
+        if (!($this->rRedis instanceof \Redis) || !($this->wRedis instanceof \Redis)) {
             throw new \InvalidArgumentException('Redis instance required');
         }
 
@@ -35,7 +48,6 @@ class Frequency
             throw new \InvalidArgumentException('Config required');
         }
 
-        $this->redis = $redis;
         $this->config = $config;
         $this->hash_max_length = $hash_max_length;
         $this->time = time();
@@ -73,7 +85,7 @@ class Frequency
     {
         $key = self::getHashKey($value, $key_cover);
         $time_in_min_now = intval($this->time / 60);
-        $data = $this->redis->hGetAll($key);
+        $data = $this->rRedis->hGetAll($key);
         if (empty($data)) {
             return 0;
         }
@@ -107,15 +119,15 @@ class Frequency
     protected function incr($value, $time, $expire, $key_cover)
     {
         $key = self::getHashKey($value, $key_cover);
-        $hash_keys = $this->redis->hKeys($key);
+        $hash_keys = $this->rRedis->hKeys($key);
 
         // recycle
         if (isset($hash_keys[$this->hash_max_length])) {
-            $this->redis->hDel($key, $hash_keys[0]);
+            $this->wRedis->hDel($key, $hash_keys[0]);
         }
 
-        $ret = $this->redis->hIncrBy($key, $time, 1);
-        $this->redis->expire($key, $expire);
+        $ret = $this->wRedis->hIncrBy($key, $time, 1);
+        $this->wRedis->expire($key, $expire);
 
         return $ret;
     }
@@ -134,7 +146,7 @@ class Frequency
 
         $count = 0;
         $sum = 0;
-        $data = $this->redis->hGetAll($key);
+        $data = $this->rRedis->hGetAll($key);
         $time_key = &$time_in_min;
 
         foreach ($this->config['rules'] as $time => $rule) {
