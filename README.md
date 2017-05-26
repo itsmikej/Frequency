@@ -2,6 +2,10 @@
 A simple frequency control system
 ===========================
 
+[![Latest Stable Version](https://poser.pugx.org/imj/frequency/v/stable)](https://packagist.org/packages/imj/frequency)
+[![Total Downloads](https://poser.pugx.org/imj/frequency/downloads)](https://packagist.org/packages/imj/frequency)
+[![License](https://poser.pugx.org/imj/frequency/license)](https://packagist.org/packages/imj/frequency)
+
 Installation
 ------------
 ```shell
